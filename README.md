@@ -17,8 +17,6 @@ Two modes are available:
 - **Distributed** — Local plus the allowed remotes share compatible queued jobs.
 - **Remote Only** — Only the allowed remotes render compatible jobs; Local acts as the coordinator when needed.
 
-The standalone implementation is aligned with the backend design of InvokeAI PR #9642 where that behavior can be implemented entirely from a custom node. Remote workers remain unmodified stock InvokeAI.
-
 ## Features
 
 - Real queue-item claiming for Distributed mode
@@ -234,15 +232,22 @@ If a remote cancellation request fails, transferred inputs are preserved because
 - automatic LAN transfer supports single-file models only
 - directory/Diffusers auto-install requires a usable saved Hugging Face source
 - local-only directory models cannot be copied to an unmodified stock remote
-- the standalone node cannot use PR #9642's custom worker-side directory-layout endpoint, so directory validation is limited to the stock model hash plus stock missing-root detection
+- some capabilities in the full Remote Workers implementation require changes to InvokeAI itself and cannot be provided by a standalone custom node
+- directory validation is therefore limited to the stock model hash plus stock missing-root detection
 - the standalone node cannot hook queue enqueue as early as a core InvokeAI feature can
 - queue-wide claiming relies on InvokeAI's SQLite session-queue internals and may require updates when InvokeAI changes those internals
 
-## Development background
+## Background
 
-v0.10.0 reorganized the node pack around the backend architecture used by InvokeAI PR #9642, while deliberately keeping every remote worker stock.
+This project is a standalone custom-node implementation of the Remote Workers work developed in [InvokeAI PR #9642](https://github.com/invoke-ai/InvokeAI/pull/9642).
 
-The following PR-only capabilities are not copied because they require core/frontend or worker-side changes:
+The PR provides deeper integration into InvokeAI, including frontend controls and worker-side APIs. This project brings as much of that functionality as possible to a custom node while keeping remote InvokeAI instances completely stock.
+
+It also provides a way to continue using the Remote Workers functionality independently if PR #9642 is not merged upstream.
+
+**This node does not require PR #9642 or a modified InvokeAI installation on the remote workers.**
+
+The following capabilities from the full Remote Workers implementation are not included because they require core/frontend or worker-side changes:
 
 - frontend Remote Workers settings UI
 - primary credential/settings APIs
