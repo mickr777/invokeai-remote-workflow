@@ -1,0 +1,10 @@
+remotes.json
+remote_state.json
+__pycache__/
+*.pyc
+*.pyo
+*.bak
+.venv/
+.vscode/
+.idea/
+.DS_Store
